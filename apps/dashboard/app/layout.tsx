@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-});
+import AppProvider from "./Provider";
+import { NavBar } from "@/components/NavBar";
 
 export const metadata: Metadata = {
-  title: "Dashboard App",
-  description: "Dashboard application",
+  title: "EigenWatch",
+  description: "Risk Analysis Platform",
 };
 
 export default function RootLayout({
@@ -23,8 +15,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className={`antialiased`}>
+        <AppProvider>
+          <div className="flex flex-col w-full h-screen bg-[#09090B] text-[#FFFFFF]">
+            <NavBar />
+            <div className=" w-full flex h-full overflow-y-auto">
+              <div className="max-w-[1440px] w-full mx-auto flex flex-col h-full px-[108px]">
+                {children}
+              </div>
+            </div>
+          </div>
+        </AppProvider>
       </body>
     </html>
   );
