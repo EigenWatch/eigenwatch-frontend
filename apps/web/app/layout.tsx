@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Header />
-          <main className="min-h-screen pt-20">{children}</main>
+          <main className="min-h-screen pt-[65px]">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>
