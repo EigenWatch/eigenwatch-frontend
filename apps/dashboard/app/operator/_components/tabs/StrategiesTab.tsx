@@ -3,27 +3,12 @@
 // components/operator/tabs/StrategiesTab.tsx
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { ArrowUpDown, Info, TrendingUp, PieChart } from "lucide-react";
+import { Info, TrendingUp, PieChart } from "lucide-react";
 import {
   PieChart as RechartsPieChart,
   Pie,
@@ -33,6 +18,8 @@ import {
   Tooltip as RechartsTooltip,
 } from "recharts";
 import { formatEther } from "@/lib/formatting";
+import { StatCard } from "@/components/shared/data/StatCard";
+import ReusableTable from "@/components/shared/table/ReuseableTable";
 
 interface StrategiesTabProps {
   operatorId: string;
@@ -45,25 +32,6 @@ const StrategiesTab = ({
   strategies = [],
   isLoading,
 }: StrategiesTabProps) => {
-  const [sortField, setSortField] = useState<string>("tvs");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("desc");
-    }
-  };
-
-  const sortedStrategies = [...strategies].sort((a, b) => {
-    const aVal = a[sortField];
-    const bVal = b[sortField];
-    const multiplier = sortOrder === "asc" ? 1 : -1;
-    return (aVal > bVal ? 1 : -1) * multiplier;
-  });
-
   // Prepare data for pie chart
   const pieChartData = strategies.map((strategy, index) => ({
     name: strategy.name || strategy.symbol || "Unknown",
@@ -115,10 +83,6 @@ const StrategiesTab = ({
   }
 
   const totalTVS = strategies.reduce((sum, s) => sum + parseFloat(s.tvs), 0);
-  const totalEncumbered = strategies.reduce(
-    (sum, s) => sum + parseFloat(s.encumbered || 0),
-    0
-  );
   const avgUtilization =
     strategies.reduce((sum, s) => sum + (s.utilizationRate || 0), 0) /
     strategies.length;
@@ -127,76 +91,28 @@ const StrategiesTab = ({
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-0 flex">
-            <div className="space-y-2 my-auto">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[#9F9FA9]">Total Strategies</span>
-                <Badge variant="secondary">{strategies.length}</Badge>
-              </div>
-              <p className="text-2xl font-bold">{strategies.length}</p>
-              <p className="text-xs text-muted-foreground">
-                Unique asset strategies
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Strategies"
+          value={strategies.length}
+          subtitle="Unique asset strategies"
+        />
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Combined TVS
-                </span>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="h-3 w-3 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="text-xs">
-                        Total value across all strategies
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <p className="text-2xl font-bold">
-                {formatEther(totalTVS.toString())}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Total delegated value
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Combined TVS"
+          value={formatEther(totalTVS.toString())}
+          subtitle="Total delegated value"
+          tooltip="Total value across all strategies"
+          icon={<Info className="h-4 w-4" />}
+        />
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Avg Utilization
-                </span>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="h-3 w-3 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="text-xs">
-                        Average utilization across all strategies
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <p className="text-2xl font-bold">{avgUtilization.toFixed(1)}%</p>
-              <Progress value={avgUtilization} className="h-2 mt-2" />
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Avg Utilization"
+          value={`${avgUtilization.toFixed(1)}%`}
+          subtitle={
+            <Progress value={avgUtilization} className="h-1.5 w-full mt-1" />
+          }
+          tooltip="Average utilization across all strategies"
+        />
       </div>
 
       {/* TVS Distribution Chart */}
@@ -261,151 +177,69 @@ const StrategiesTab = ({
       </Card>
 
       {/* Strategies Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Strategies</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort("name")}
-                      className="hover:bg-transparent"
-                    >
-                      Strategy
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort("tvs")}
-                      className="hover:bg-transparent"
-                    >
-                      Total Value
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort("encumbered")}
-                      className="hover:bg-transparent"
-                    >
-                      Allocated
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>Available</TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort("utilizationRate")}
-                      className="hover:bg-transparent"
-                    >
-                      Utilization
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort("delegatorCount")}
-                      className="hover:bg-transparent"
-                    >
-                      Delegators
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedStrategies.map((strategy, index) => {
-                  const tvs = parseFloat(strategy.tvs) / 1e18;
-                  const encumbered =
-                    parseFloat(strategy.encumbered || 0) / 1e18;
-                  const available = tvs - encumbered;
-                  const utilization = strategy.utilizationRate || 0;
-
-                  return (
-                    <TableRow
-                      key={index}
-                      className="hover:bg-muted/50 cursor-pointer"
-                    >
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p className="font-medium">
-                            {strategy.name || "Unknown Strategy"}
-                          </p>
-                          <p className="text-xs text-muted-foreground font-mono">
-                            {strategy.symbol ||
-                              strategy.address?.slice(0, 10) + "..."}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p className="font-medium">{tvs.toFixed(4)} ETH</p>
-                          <p className="text-xs text-muted-foreground">
-                            ≈ ${(tvs * 2400).toLocaleString()}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p className="font-medium">
-                            {encumbered.toFixed(4)} ETH
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {((encumbered / tvs) * 100).toFixed(1)}% of total
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p className="font-medium">
-                            {available.toFixed(4)} ETH
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Unallocated
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">
-                              {utilization.toFixed(1)}%
-                            </span>
-                            {utilization > 80 && (
-                              <TrendingUp className="h-3 w-3 text-green-500" />
-                            )}
-                          </div>
-                          <Progress value={utilization} className="h-1.5" />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">
-                          {strategy.delegatorCount || 0}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <ReusableTable
+        columns={[
+          { key: "name", displayName: "Strategy" },
+          { key: "tvs", displayName: "Total Value" },
+          { key: "encumbered", displayName: "Allocated" },
+          { key: "available", displayName: "Available" },
+          { key: "utilizationRate", displayName: "Utilization" },
+          { key: "delegatorCount", displayName: "Delegators" },
+        ]}
+        data={strategies.map((s) => {
+          const tvs = parseFloat(s.tvs) / 1e18;
+          const encumbered = parseFloat(s.encumbered || 0) / 1e18;
+          const available = tvs - encumbered;
+          return {
+            ...s,
+            tvs: (
+              <div className="space-y-1">
+                <p className="font-medium">{tvs.toFixed(4)} ETH</p>
+                <p className="text-xs text-muted-foreground">
+                  ≈ ${(tvs * 2400).toLocaleString()}
+                </p>
+              </div>
+            ),
+            encumbered: (
+              <div className="space-y-1">
+                <p className="font-medium">{encumbered.toFixed(4)} ETH</p>
+                <p className="text-xs text-muted-foreground">
+                  {((encumbered / tvs) * 100).toFixed(1)}% of total
+                </p>
+              </div>
+            ),
+            available: (
+              <div className="space-y-1">
+                <p className="font-medium">{available.toFixed(4)} ETH</p>
+                <p className="text-xs text-muted-foreground">Unallocated</p>
+              </div>
+            ),
+            utilizationRate: (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    {(s.utilizationRate || 0).toFixed(1)}%
+                  </span>
+                  {(s.utilizationRate || 0) > 80 && (
+                    <TrendingUp className="h-3 w-3 text-green-500" />
+                  )}
+                </div>
+                <Progress value={s.utilizationRate || 0} className="h-1.5" />
+              </div>
+            ),
+            delegatorCount: <Badge variant="secondary">{s.delegatorCount || 0}</Badge>,
+            name: (
+              <div className="space-y-1">
+                <p className="font-medium">{s.name || "Unknown Strategy"}</p>
+                <p className="text-xs text-muted-foreground font-mono">
+                  {s.symbol || s.address?.slice(0, 10) + "..."}
+                </p>
+              </div>
+            ),
+          };
+        })}
+        tableFilters={{ title: "All Strategies" }}
+      />
     </div>
   );
 };

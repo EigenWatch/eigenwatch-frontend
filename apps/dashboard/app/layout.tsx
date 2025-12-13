@@ -7,7 +7,6 @@ const navLinks = [
   { label: "Dashboard", href: "/" },
   { label: "Operator", href: "/operator" },
   { label: "AVS", href: "/avs" },
-  { label: "Staker", href: "/staker" },
   { label: "Strategy", href: "/strategy" },
 ];
 
@@ -30,7 +29,7 @@ export default function RootLayout({
               logoHref={process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000"}
               navLinks={navLinks}
             />
-            <div className=" w-full flex h-full overflow-y-auto">
+            <div className=" w-full flex h-full overflow-y-auto pt-[65px]">
               <div className="max-w-[1440px] w-full mx-auto flex flex-col h-full px-[108px]">
                 {children}
               </div>

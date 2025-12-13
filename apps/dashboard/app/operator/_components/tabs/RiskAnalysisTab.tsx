@@ -3,6 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "lucide-react";
+import { MetricProgress } from "@/components/shared/data/MetricProgress";
+import { StatCard } from "@/components/shared/data/StatCard";
 
 // components/operator/tabs/RiskAnalysisTab.tsx
 interface RiskAnalysisTabProps {
@@ -35,69 +37,22 @@ export const RiskAnalysisTab = ({
           <CardTitle>Risk Score Breakdown</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">Concentration Risk</span>
-              <span className="font-semibold">
-                {risk?.components?.concentrationRisk || 0}/100
-              </span>
-            </div>
-            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-green-500"
-                style={{
-                  width: `${risk?.components?.concentrationRisk || 0}%`,
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">Volatility Risk</span>
-              <span className="font-semibold">
-                {risk?.components?.volatilityRisk || 0}/100
-              </span>
-            </div>
-            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-yellow-500"
-                style={{ width: `${risk?.components?.volatilityRisk || 0}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">Slashing History</span>
-              <span className="font-semibold">
-                {risk?.components?.slashingHistory || 0}/100
-              </span>
-            </div>
-            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-red-500"
-                style={{ width: `${risk?.components?.slashingHistory || 0}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">Operational Stability</span>
-              <span className="font-semibold">
-                {risk?.components?.operationalStability || 0}/100
-              </span>
-            </div>
-            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-500"
-                style={{
-                  width: `${risk?.components?.operationalStability || 0}%`,
-                }}
-              />
-            </div>
-          </div>
+          <MetricProgress
+            metric="Concentration Risk"
+            value={risk?.components?.concentrationRisk || 0}
+          />
+          <MetricProgress
+            metric="Volatility Risk"
+            value={risk?.components?.volatilityRisk || 0}
+          />
+          <MetricProgress
+            metric="Slashing History"
+            value={risk?.components?.slashingHistory || 0}
+          />
+          <MetricProgress
+            metric="Operational Stability"
+            value={risk?.components?.operationalStability || 0}
+          />
         </CardContent>
       </Card>
 
@@ -140,25 +95,20 @@ export const RiskAnalysisTab = ({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Risk Assessment</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-4">
-              <div className="text-4xl font-bold mb-2">
-                {risk?.overallScore || 0}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Overall Risk Score
-              </p>
-              <Badge className="mt-4">
+        <StatCard
+          title="Risk Assessment"
+          value={risk?.overallScore || 0}
+          subtitle={
+            <div className="flex flex-col gap-1">
+              <span>Overall Risk Score</span>
+              <span className="text-xs text-muted-foreground">
                 {new Date(risk?.assessmentDate).toLocaleDateString()}
-              </Badge>
+              </span>
             </div>
-          </CardContent>
-        </Card>
+          }
+        />
       </div>
     </div>
   );
 };
+
