@@ -37,7 +37,7 @@ export const StatCard = ({
 
   return (
     <CardContainer>
-      <div className="flex flex-col justify-between w-full gap-[6px]">
+      <div className="flex flex-col justify-between w-full gap-[6px] h-full">
         <div className="flex justify-between w-full">
           <InfoHeading heading={title} info={tooltip} />
           <div className="h-fit w-10 text-muted-foreground flex my-auto items-center justify-end">

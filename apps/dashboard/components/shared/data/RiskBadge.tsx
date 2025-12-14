@@ -3,9 +3,11 @@ import { Badge } from "@/components/ui/badge";
 export const RiskBadge = ({
   level = "CRITICAL",
   score = "0",
+  scoreType = "risk"
 }: {
   level: string;
   score: string;
+  scoreType?: "risk" | "confidence"
 }) => {
   const colors = {
     LOW: "bg-green-500/10 text-green-500 border-green-500/20",
@@ -23,7 +25,7 @@ export const RiskBadge = ({
       >
         {`${level} RISK`.toLowerCase()}
       </Badge>
-      <span className="text-sm text-muted-foreground">Score: {score}/100</span>
+      <span className="text-sm text-muted-foreground">{scoreType === "confidence" ?`Confidence`:  `Score`}: {score}/100</span>
     </div>
   );
 };
