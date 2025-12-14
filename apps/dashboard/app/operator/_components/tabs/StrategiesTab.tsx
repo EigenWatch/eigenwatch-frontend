@@ -14,21 +14,19 @@ import { StatCard } from "@/components/shared/data/StatCard";
 import ReusableTable from "@/components/shared/table/ReuseableTable";
 import { DonutChart } from "@/components/shared/charts/DonutChart";
 
+import { useOperatorStrategies } from "@/hooks/crud/useStrategy";
+
 interface StrategiesTabProps {
   operatorId: string;
-  strategies: any[];
-  isLoading: boolean;
 }
 
-const StrategiesTab = ({
-  operatorId,
-  strategies = [],
-  isLoading,
-}: StrategiesTabProps) => {
+const StrategiesTab = ({ operatorId }: StrategiesTabProps) => {
+  const { data: strategiesData, isLoading } = useOperatorStrategies(operatorId);
+  const strategies = strategiesData?.strategies || [];
   // Prepare data for pie chart
   const pieChartData = strategies.map((strategy, index) => ({
     name: strategy.name || strategy.symbol || "Unknown",
-    value: parseFloat(strategy.tvs) / 1e18,
+    value: strategy.tvs / 1e18,
     color: `hsl(var(--chart-${(index % 5) + 1}))`,
   }));
 
@@ -75,7 +73,7 @@ const StrategiesTab = ({
     );
   }
 
-  const totalTVS = strategies.reduce((sum, s) => sum + parseFloat(s.tvs), 0);
+  const totalTVS = strategies.reduce((sum, s) => sum + s.tvs, 0);
   const avgUtilization =
     strategies.reduce((sum, s) => sum + (s.utilizationRate || 0), 0) /
     strategies.length;
@@ -156,8 +154,8 @@ const StrategiesTab = ({
           { key: "delegatorCount", displayName: "Delegators" },
         ]}
         data={strategies.map((s) => {
-          const tvs = parseFloat(s.tvs) / 1e18;
-          const encumbered = parseFloat(s.encumbered || 0) / 1e18;
+          const tvs = s.tvs / 1e18;
+          const encumbered = (s.encumbered || 0) / 1e18;
           const available = tvs - encumbered;
           return {
             ...s,

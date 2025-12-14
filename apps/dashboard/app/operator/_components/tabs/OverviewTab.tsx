@@ -16,19 +16,23 @@ import { ActivityItem } from "@/components/shared/data/ActivityItem";
 import { AreaChart } from "@/components/shared/charts/AreaChart";
 import { LineChart } from "@/components/shared/charts/LineChart";
 
+import { useRiskAssessment } from "@/hooks/crud/useOperatorRisk";
+import { useOperatorActivity } from "@/hooks/crud/useOperator";
+
 interface OverviewTabProps {
   operator: OperatorDetail;
-  riskData?: RiskAssessment;
-  activity: any;
-  isLoading: boolean;
 }
 
-const OverviewTab = ({
-  operator,
-  riskData,
-  activity,
-  isLoading,
-}: OverviewTabProps) => {
+const OverviewTab = ({ operator }: OverviewTabProps) => {
+  const { data: riskData, isLoading: loadingRisk } = useRiskAssessment(
+    operator?.operator_id
+  );
+  const { data: activityData, isLoading: loadingActivity } = useOperatorActivity(
+    operator?.operator_id,
+    { limit: 10 }
+  );
+  const activity = activityData?.data?.data || [];
+  const isLoading = loadingRisk || loadingActivity;
   // Get last 30 days of snapshots
   const endDate = new Date();
   const startDate = new Date();

@@ -6,18 +6,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CommissionOverview } from "@/types/commission.types";
 
+import { useOperatorCommission } from "@/hooks/crud/commission";
+
 // components/operator/tabs/CommissionTab.tsx
 interface CommissionTabProps {
   operatorId: string;
-  commission?: CommissionOverview;
-  isLoading: boolean;
 }
 
-export const CommissionTab = ({
-  operatorId,
-  commission,
-  isLoading,
-}: CommissionTabProps) => {
+export const CommissionTab = ({ operatorId }: CommissionTabProps) => {
+  const { data: commission, isLoading } = useOperatorCommission(operatorId);
   if (isLoading) {
     return (
       <Card>

@@ -11,17 +11,15 @@ import { StatCard } from "@/components/shared/data/StatCard";
 import { SectionContainer } from "@/components/shared/data/SectionContainer";
 import ReusableTable from "@/components/shared/table/ReuseableTable";
 
+import { useOperatorAVS } from "@/hooks/crud/useAvs";
+
 interface AVSTabProps {
   operatorId: string;
-  avsList: any[];
-  isLoading: boolean;
 }
 
-export const AVSTab = ({
-  operatorId,
-  avsList = [],
-  isLoading,
-}: AVSTabProps) => {
+export const AVSTab = ({ operatorId }: AVSTabProps) => {
+  const { data: avsData, isLoading } = useOperatorAVS(operatorId);
+  const avsList = avsData?.avs_relationships || [];
   const [sortField, setSortField] = useState("daysRegistered");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -39,7 +37,7 @@ export const AVSTab = ({
 
   const registered = avsList?.filter((avs) => avs.status === "registered");
   const totalAllocated = avsList.reduce(
-    (sum, avs) => sum + parseFloat(avs.totalAllocated || 0),
+    (sum, avs: any) => sum + parseFloat(avs.totalAllocated || 0),
     0
   );
 
@@ -62,7 +60,7 @@ export const AVSTab = ({
           value={
             <>
               {(
-                avsList.reduce((s, a) => s + (a.commission || 0), 0) /
+                avsList.reduce((s, a: any) => s + (a.commission || 0), 0) /
                 avsList.length
               ).toFixed(1)}
               %

@@ -6,18 +6,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AllocationsOverview } from "@/types/allocation.types";
 
+import { useAllocationsOverview } from "@/hooks/crud/useAllocation";
+
 // components/operator/tabs/AllocationsTab.tsx
 interface AllocationsTabProps {
   operatorId: string;
-  allocations?: AllocationsOverview;
-  isLoading: boolean;
 }
 
-export const AllocationsTab = ({
-  operatorId,
-  allocations,
-  isLoading,
-}: AllocationsTabProps) => {
+export const AllocationsTab = ({ operatorId }: AllocationsTabProps) => {
+  const { data: allocations, isLoading } = useAllocationsOverview(operatorId);
   if (isLoading) {
     return (
       <Card>

@@ -3,29 +3,19 @@
 import { SectionContainer } from "@/components/shared/data/SectionContainer";
 import { StatCard } from "@/components/shared/data/StatCard";
 import ReusableTable from "@/components/shared/table/ReuseableTable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import { Table, Badge } from "lucide-react";
+import { useOperatorDelegators } from "@/hooks/crud/useDelegators";
 
 // components/operator/tabs/DelegatorsTab.tsx
 interface DelegatorsTabProps {
   operatorId: string;
-  delegators: any;
-  isLoading: boolean;
 }
 
-export const DelegatorsTab = ({
-  operatorId,
-  delegators,
-  isLoading,
-}: DelegatorsTabProps) => {
+export const DelegatorsTab = ({ operatorId }: DelegatorsTabProps) => {
+  const { data: delegators, isLoading } = useOperatorDelegators(operatorId, {
+    limit: 20,
+  });
   if (isLoading) {
     return (
       <Card>
@@ -38,8 +28,8 @@ export const DelegatorsTab = ({
 
   console.log({ delegators });
 
-  const delegatorsList = delegators?.data || [];
-  const total = delegators?.total || 0;
+  const delegatorsList = delegators || [];
+  const total = delegatorsList.length;
 
   return (
     <div className="space-y-4">

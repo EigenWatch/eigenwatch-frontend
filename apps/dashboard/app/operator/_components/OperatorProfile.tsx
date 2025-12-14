@@ -23,16 +23,10 @@ import {
 import {
   useOperator,
   useOperatorStats,
-  useOperatorActivity,
 } from "@/hooks/crud/useOperator";
 import OverviewTab from "./tabs/OverviewTab";
 import StrategiesTab from "./tabs/StrategiesTab";
-import { useOperatorCommission } from "@/hooks/crud/commission";
-import { useAllocationsOverview } from "@/hooks/crud/useAllocation";
-import { useOperatorAVS } from "@/hooks/crud/useAvs";
-import { useOperatorDelegators } from "@/hooks/crud/useDelegators";
 import { useRiskAssessment } from "@/hooks/crud/useOperatorRisk";
-import { useOperatorStrategies } from "@/hooks/crud/useStrategy";
 import { formatEther } from "@/lib/formatting";
 import { AllocationsTab } from "./tabs/AllocationsTab";
 import { AVSTab } from "./tabs/AVSTab";
@@ -55,21 +49,8 @@ const OperatorProfile = () => {
     useOperator(operatorId);
   const { data: statsData, isLoading: loadingStats } =
     useOperatorStats(operatorId);
-  const { data: activityData, isLoading: loadingActivity } =
-    useOperatorActivity(operatorId, { limit: 10 });
-  const { data: strategiesData, isLoading: loadingStrategies } =
-    useOperatorStrategies(operatorId);
-  const { data: avsData, isLoading: loadingAVS } = useOperatorAVS(operatorId);
-  const { data: delegatorsData, isLoading: loadingDelegators } =
-    useOperatorDelegators(operatorId, { limit: 20 });
-  const { data: commissionData, isLoading: loadingCommission } =
-    useOperatorCommission(operatorId);
   const { data: riskData, isLoading: loadingRisk } =
     useRiskAssessment(operatorId);
-  const { data: allocationsData, isLoading: loadingAllocations } =
-    useAllocationsOverview(operatorId);
-
-  console.log({ avsData });
 
   const operator = operatorData;
   const stats = statsData;
@@ -338,60 +319,31 @@ const OperatorProfile = () => {
         </TabsList>
 
         <TabsContent value="overview">
-          <OverviewTab
-            operator={operator}
-            riskData={riskData}
-            activity={activityData?.data}
-            isLoading={loadingActivity}
-          />
+          <OverviewTab operator={operator} />
         </TabsContent>
 
         <TabsContent value="strategies">
-          <StrategiesTab
-            operatorId={operatorId}
-            strategies={strategiesData?.strategies || []}
-            isLoading={loadingStrategies}
-          />
+          <StrategiesTab operatorId={operatorId} />
         </TabsContent>
 
         <TabsContent value="avs">
-          <AVSTab
-            operatorId={operatorId}
-            avsList={avsData?.avs_relationships || []}
-            isLoading={loadingAVS}
-          />
+          <AVSTab operatorId={operatorId} />
         </TabsContent>
 
         <TabsContent value="delegators">
-          <DelegatorsTab
-            operatorId={operatorId}
-            delegators={delegatorsData}
-            isLoading={loadingDelegators}
-          />
+          <DelegatorsTab operatorId={operatorId} />
         </TabsContent>
 
         <TabsContent value="allocations">
-          <AllocationsTab
-            operatorId={operatorId}
-            allocations={allocationsData}
-            isLoading={loadingAllocations}
-          />
+          <AllocationsTab operatorId={operatorId} />
         </TabsContent>
 
         <TabsContent value="commission">
-          <CommissionTab
-            operatorId={operatorId}
-            commission={commissionData}
-            isLoading={loadingCommission}
-          />
+          <CommissionTab operatorId={operatorId} />
         </TabsContent>
 
         <TabsContent value="risk">
-          <RiskAnalysisTab
-            operatorId={operatorId}
-            risk={riskData}
-            isLoading={loadingRisk}
-          />
+          <RiskAnalysisTab operatorId={operatorId} />
         </TabsContent>
       </Tabs>
     </div>

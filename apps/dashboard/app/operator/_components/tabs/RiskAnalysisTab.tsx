@@ -6,18 +6,15 @@ import { Badge } from "lucide-react";
 import { MetricProgress } from "@/components/shared/data/MetricProgress";
 import { StatCard } from "@/components/shared/data/StatCard";
 
+import { useRiskAssessment } from "@/hooks/crud/useOperatorRisk";
+
 // components/operator/tabs/RiskAnalysisTab.tsx
 interface RiskAnalysisTabProps {
   operatorId: string;
-  risk: any;
-  isLoading: boolean;
 }
 
-export const RiskAnalysisTab = ({
-  operatorId,
-  risk,
-  isLoading,
-}: RiskAnalysisTabProps) => {
+export const RiskAnalysisTab = ({ operatorId }: RiskAnalysisTabProps) => {
+  const { data: risk, isLoading } = useRiskAssessment(operatorId);
   if (isLoading) {
     return (
       <Card>
@@ -38,20 +35,16 @@ export const RiskAnalysisTab = ({
         </CardHeader>
         <CardContent className="space-y-4">
           <MetricProgress
-            metric="Concentration Risk"
-            value={risk?.components?.concentrationRisk || 0}
+            metric="Performance Score"
+            value={Number(risk?.component_scores?.performance_score) || 0}
           />
           <MetricProgress
-            metric="Volatility Risk"
-            value={risk?.components?.volatilityRisk || 0}
+            metric="Economic Score"
+            value={Number(risk?.component_scores?.economic_score) || 0}
           />
           <MetricProgress
-            metric="Slashing History"
-            value={risk?.components?.slashingHistory || 0}
-          />
-          <MetricProgress
-            metric="Operational Stability"
-            value={risk?.components?.operationalStability || 0}
+            metric="Network Position"
+            value={Number(risk?.component_scores?.network_position_score) || 0}
           />
         </CardContent>
       </Card>
@@ -67,7 +60,7 @@ export const RiskAnalysisTab = ({
                 Delegation HHI
               </span>
               <span className="font-medium">
-                {risk?.metrics?.delegationHHI || 0}
+                {risk?.key_metrics?.delegation_hhi || 0}
               </span>
             </div>
             <div className="flex justify-between">
@@ -75,7 +68,7 @@ export const RiskAnalysisTab = ({
                 TVS Volatility (30d)
               </span>
               <span className="font-medium">
-                {risk?.metrics?.tvsVolatility30d || 0}%
+                {risk?.key_metrics?.delegation_volatility_30d || 0}
               </span>
             </div>
             <div className="flex justify-between">
@@ -83,13 +76,13 @@ export const RiskAnalysisTab = ({
                 Slashing Count
               </span>
               <span className="font-medium">
-                {risk?.metrics?.slashingCount || 0}
+                {risk?.key_metrics?.slashing_event_count || 0}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Uptime</span>
+              <span className="text-sm text-muted-foreground">Operational Days</span>
               <span className="font-medium">
-                {risk?.metrics?.uptimePercentage || 0}%
+                {risk?.key_metrics?.operational_days || 0}
               </span>
             </div>
           </CardContent>
@@ -97,12 +90,12 @@ export const RiskAnalysisTab = ({
 
         <StatCard
           title="Risk Assessment"
-          value={risk?.overallScore || 0}
+          value={risk?.risk_score || 0}
           subtitle={
             <div className="flex flex-col gap-1">
               <span>Overall Risk Score</span>
               <span className="text-xs text-muted-foreground">
-                {new Date(risk?.assessmentDate).toLocaleDateString()}
+                {risk?.assessment_date ? new Date(risk.assessment_date).toLocaleDateString() : "N/A"}
               </span>
             </div>
           }
