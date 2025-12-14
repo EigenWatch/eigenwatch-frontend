@@ -118,10 +118,10 @@ const OperatorProfile = () => {
         <Card className="max-w-md w-full">
           <CardContent className="pt-4 text-center space-y-4">
             <AlertTriangle className="h-12 w-12 text-destructive mx-auto" />
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-xl font-semibold text-foreground">
               Operator Not Found
             </h2>
-            <p className="text-sm text-white">
+            <p className="text-sm text-foreground">
               The operator you&apos;re looking for doesn&apos;t exist or has
               been removed.
             </p>
@@ -148,7 +148,7 @@ const OperatorProfile = () => {
           <div className="flex items-center gap-4">
             <Avatar className="h-20 w-20 rounded-lg mb-auto">
               <AvatarImage src={operator.metadata?.logo} />
-              <AvatarFallback className="rounded-lg bg-blue-900/20 text-2xl font-[500]">
+              <AvatarFallback className="rounded-lg bg-primary/10 text-2xl font-[500]">
                 {operator.metadata?.name?.[0] || "AO"}
               </AvatarFallback>
             </Avatar>
@@ -202,7 +202,7 @@ const OperatorProfile = () => {
               </div>
 
               {operator.metadata?.description && (
-                <p className="text-sm text-[#9F9FA9] max-w-2xl">
+                <p className="text-sm text-muted-foreground max-w-2xl">
                   {operator.metadata.description}
                 </p>
               )}
@@ -280,13 +280,13 @@ const OperatorProfile = () => {
                 heading="Commission Rate"
                 info="The fee the operator charges for their services. Measured in bips (1 bip = 0.01%). For example, 1000 bips = 10%."
               />
-              <span className="text-sm font-semibold text-[#9F9FA9]">
+              <span className="text-sm font-semibold text-muted-foreground">
                 {(stats?.commission.pi_split_bips || 0) / 100}%
               </span>
             </div>
             <Progress
               value={stats?.commission.pi_split_bips || 0}
-              className="h-2 mt-auto bg-[#9F9FA9]/10 mt-4"
+              className="h-2 mt-auto bg-muted mt-4"
             />
           </div>
 
@@ -327,7 +327,7 @@ const OperatorProfile = () => {
         onValueChange={setActiveTab}
         className="space-y-2"
       >
-        <TabsList className="grid w-full grid-cols-7 bg-[#18181B80] text-white">
+        <TabsList className="grid w-full grid-cols-7 bg-muted/50 text-foreground">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="strategies">Strategies</TabsTrigger>
           <TabsTrigger value="avs">AVS</TabsTrigger>

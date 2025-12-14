@@ -9,10 +9,10 @@ export function MetricProgress({
 }) {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-[#9F9FA9]">{metric}</span>
+      <span className="text-muted-foreground">{metric}</span>
       <div className="flex items-center gap-2">
-        <Progress value={value} className="h-1.5 w-20 bg-[#9F9FA9]/10" />
-        <span className="font-medium w-12 text-right text-[#9F9FA9]">
+        <Progress value={value} className="h-1.5 w-20 bg-muted" />
+        <span className="font-medium w-12 text-right text-muted-foreground">
           {value}%
         </span>
       </div>

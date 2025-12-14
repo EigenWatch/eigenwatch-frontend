@@ -40,15 +40,15 @@ export const StatCard = ({
       <div className="flex flex-col justify-between w-full gap-[6px]">
         <div className="flex justify-between w-full">
           <InfoHeading heading={title} info={tooltip} />
-          <div className="h-fit w-10 text-[#9F9FA9] flex my-auto items-center justify-end">
+          <div className="h-fit w-10 text-muted-foreground flex my-auto items-center justify-end">
             {icon}
           </div>
         </div>
         <div className="flex ">
-          <p className="text-[26px] text-white font-[500]">{value}</p>
+          <p className="text-[26px] text-foreground font-[500]">{value}</p>
         </div>
         {subtitle && (
-          <div className="text-[14px] text-[#9F9FA9] flex w-full">
+          <div className="text-[14px] text-muted-foreground flex w-full">
             {subtitle}
           </div>
         )}

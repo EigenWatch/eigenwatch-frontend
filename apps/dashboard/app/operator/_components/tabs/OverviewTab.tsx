@@ -100,15 +100,15 @@ const OverviewTab = ({
               </div>
 
               {/* Key Stats */}
-              <div className="pt-3 space-y-3 border-t border-white/10">
+              <div className="pt-3 space-y-3 border-t border-border">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#9F9FA9]">Confidence Score</span>
-                  <Badge className="bg-transparent text-[#9F9FA9]">
+                  <span className="text-muted-foreground">Confidence Score</span>
+                  <Badge className="bg-transparent text-muted-foreground">
                     {riskData?.confidence_score}%
                   </Badge>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#9F9FA9]">Delegation Volatility</span>
+                  <span className="text-muted-foreground">Delegation Volatility</span>
                   <Badge className="text-green-500 bg-transparent">
                     Stable
                   </Badge>
@@ -144,7 +144,7 @@ const OverviewTab = ({
               ))}
             </div>
           ) : (
-            <div className="text-center text-[#9F9FA9] my-auto">
+            <div className="text-center text-muted-foreground my-auto">
               <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
               <p className="text-sm">No recent activity</p>
             </div>
@@ -168,7 +168,7 @@ const OverviewTab = ({
             height={300}
           />
         ) : (
-          <div className="h-64 flex items-center justify-center text-[#9F9FA9] my-auto">
+          <div className="h-64 flex items-center justify-center text-muted-foreground my-auto">
             <div className="text-center">
               <TrendingUp className="h-12 w-12 mx-auto mb-2 opacity-50" />
               <p className="text-sm">
@@ -194,7 +194,7 @@ const OverviewTab = ({
               height={200}
             />
           ) : (
-            <div className="h-48 flex items-center justify-center text-[#9F9FA9] my-auto text-sm">
+            <div className="h-48 flex items-center justify-center text-muted-foreground my-auto text-sm">
               No data available
             </div>
           )}
@@ -213,7 +213,7 @@ const OverviewTab = ({
               height={200}
             />
           ) : (
-            <div className="h-48 flex items-center justify-center text-[#9F9FA9] my-auto text-sm">
+            <div className="h-48 flex items-center justify-center text-muted-foreground my-auto text-sm">
               No data available
             </div>
           )}
