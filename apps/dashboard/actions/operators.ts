@@ -2,6 +2,7 @@
 "use server";
 
 import { handleApiAction } from "@/lib/handleApiAction";
+import { serializeParams } from "@/lib/utils";
 import {
   DailySnapshotsParams,
   DailySnapshot,
@@ -23,9 +24,7 @@ import { SlashingIncidents } from "@/types/slash.types";
 // ==================== OPERATORS ====================
 
 export const getOperators = async (params?: OperatorListParams) => {
-  const queryString = params
-    ? `?${new URLSearchParams(params as any).toString()}`
-    : "";
+  const queryString = serializeParams(params as any);
   return handleApiAction<Operator[]>({
     endpoint: `/api/v1/operators${queryString}`,
     method: "get",
@@ -48,9 +47,7 @@ export const getOperatorActivity = async (
   id: string,
   params?: ActivityParams
 ) => {
-  const queryString = params
-    ? `?${new URLSearchParams(params as any).toString()}`
-    : "";
+  const queryString = serializeParams(params as any);
   return handleApiAction<Activity[]>({
     endpoint: `/api/v1/operators/${id}/activity${queryString}`,
     method: "get",
@@ -63,8 +60,8 @@ export const getDailySnapshots = async (
   id: string,
   params: DailySnapshotsParams
 ) => {
-  const queryString = `?${new URLSearchParams(params as any).toString()}`;
-  return handleApiAction<DailySnapshot[]>({
+  const queryString = serializeParams(params as any);
+  return handleApiAction<{snapshots: DailySnapshot[]}>({
     endpoint: `/api/v1/operators/${id}/snapshots/daily${queryString}`,
     method: "get",
   });
@@ -88,7 +85,7 @@ export const compareOperators = async (body: CompareOperatorsRequest) =>
   });
 
 export const getOperatorRankings = async (id: string, date?: string) => {
-  const queryString = date ? `?date=${date}` : "";
+  const queryString = serializeParams({ date });
   return handleApiAction<OperatorRankings>({
     endpoint: `/api/v1/operators/${id}/rankings${queryString}`,
     method: "get",
@@ -96,7 +93,7 @@ export const getOperatorRankings = async (id: string, date?: string) => {
 };
 
 export const compareOperatorToNetwork = async (id: string, date?: string) => {
-  const queryString = date ? `?date=${date}` : "";
+  const queryString = serializeParams({ date });
   return handleApiAction<NetworkComparison>({
     endpoint: `/api/v1/operators/${id}/vs-network${queryString}`,
     method: "get",

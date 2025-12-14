@@ -69,7 +69,7 @@ const OperatorProfile = () => {
   const { data: allocationsData, isLoading: loadingAllocations } =
     useAllocationsOverview(operatorId);
 
-  console.log({ riskData });
+  console.log({ avsData });
 
   const operator = operatorData;
   const stats = statsData;

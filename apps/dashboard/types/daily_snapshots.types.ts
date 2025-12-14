@@ -8,11 +8,16 @@ export interface DailySnapshotsParams {
 
 export interface DailySnapshot {
   date: string;
-  tvs: number;
-  delegatorCount: number;
-  avsCount: number;
-  operatorSetCount: number;
-  utilizationRate: number;
+  block_number: number;
+  delegator_count: number;
+  active_avs_count: number;
+  active_operator_set_count: number;
+  pi_split_bips: number | null;
+  slash_event_count_to_date: number;
+  operational_days: number;
+  is_active: boolean;
+  tvs?: number; // Optional as it's not in the sample but was in the old type
+  utilizationRate?: number; // Optional as it's not in the sample but was in the old type
 }
 
 export interface StrategyTVSHistoryParams {

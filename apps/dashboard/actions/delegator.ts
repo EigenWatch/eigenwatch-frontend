@@ -2,6 +2,7 @@
 "use server";
 
 import { handleApiAction } from "@/lib/handleApiAction";
+import { serializeParams } from "@/lib/utils";
 import {
   DelegatorSharesHistoryParams,
   DelegatorSharesHistory,
@@ -20,9 +21,7 @@ export const getOperatorDelegators = async (
   id: string,
   params?: DelegatorListParams
 ) => {
-  const queryString = params
-    ? `?${new URLSearchParams(params as any).toString()}`
-    : "";
+  const queryString = serializeParams(params as any);
   return handleApiAction<Delegator[]>({
     endpoint: `/api/v1/operators/${id}/delegators${queryString}`,
     method: "get",
@@ -42,9 +41,7 @@ export const getDelegationHistory = async (
   id: string,
   params?: DelegationHistoryParams
 ) => {
-  const queryString = params
-    ? `?${new URLSearchParams(params as any).toString()}`
-    : "";
+  const queryString = serializeParams(params as any);
   return handleApiAction<DelegationHistory>({
     endpoint: `/api/v1/operators/${id}/delegators/history${queryString}`,
     method: "get",
@@ -56,9 +53,7 @@ export const getDelegatorSharesHistory = async (
   stakerId: string,
   params?: DelegatorSharesHistoryParams
 ) => {
-  const queryString = params
-    ? `?${new URLSearchParams(params as any).toString()}`
-    : "";
+  const queryString = serializeParams(params as any);
   return handleApiAction<DelegatorSharesHistory>({
     endpoint: `/api/v1/operators/${operatorId}/delegators/${stakerId}/shares/history${queryString}`,
     method: "get",

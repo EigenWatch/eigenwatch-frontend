@@ -42,7 +42,7 @@ export default function OperatorPage() {
                 "flex py-[3px] w-[75px] rounded-[8px] " +
                 (operator.risk_level.toLowerCase() === "medium"
                   ? "bg-blue-800/10"
-                  : operator.risk_level.toLowerCase() === "high"
+                  : operator.risk_level.toLowerCase() === "low"
                   ? "bg-green-800/10"
                   : "bg-red-800/10")
               }
@@ -52,7 +52,7 @@ export default function OperatorPage() {
                   "capitalize text-[12px] flex mx-auto " +
                   (operator.risk_level.toLowerCase() === "medium"
                     ? "text-blue-500"
-                    : operator.risk_level.toLowerCase() === "high"
+                    : operator.risk_level.toLowerCase() === "low"
                     ? "text-green-500"
                     : "text-red-500")
                 }

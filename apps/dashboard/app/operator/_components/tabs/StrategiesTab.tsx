@@ -9,17 +9,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Info, TrendingUp, PieChart } from "lucide-react";
-import {
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Legend,
-  Tooltip as RechartsTooltip,
-} from "recharts";
 import { formatEther } from "@/lib/formatting";
 import { StatCard } from "@/components/shared/data/StatCard";
 import ReusableTable from "@/components/shared/table/ReuseableTable";
+import { DonutChart } from "@/components/shared/charts/DonutChart";
 
 interface StrategiesTabProps {
   operatorId: string;
@@ -122,38 +115,14 @@ const StrategiesTab = ({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ResponsiveContainer width="100%" height={300}>
-              <RechartsPieChart>
-                <Pie
-                  data={pieChartData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry) =>
-                    `${entry.name}: ${entry.value.toFixed(2)} ETH`
-                  }
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {pieChartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <RechartsTooltip
-                  formatter={(value: any) => `${value.toFixed(2)} ETH`}
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                  }}
-                />
-                <Legend />
-              </RechartsPieChart>
-            </ResponsiveContainer>
+            <DonutChart
+              data={pieChartData}
+              category="value"
+              index="name"
+              colors={COLORS}
+              valueFormatter={(value) => `${value.toFixed(2)} ETH`}
+              height={300}
+            />
 
             <div className="flex flex-col justify-center space-y-3">
               <h4 className="font-semibold mb-2">Strategy Breakdown</h4>

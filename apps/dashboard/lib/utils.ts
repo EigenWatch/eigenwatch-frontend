@@ -80,3 +80,22 @@ export function deepMerge(target: any, source: any) {
   }
   return target;
 }
+
+export function serializeParams(params: Record<string, any>): string {
+  if (!params) return "";
+  
+  const searchParams = new URLSearchParams();
+  
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+    
+    if (Array.isArray(value)) {
+      value.forEach(item => searchParams.append(key, String(item)));
+    } else {
+      searchParams.append(key, String(value));
+    }
+  });
+  
+  const queryString = searchParams.toString();
+  return queryString ? `?${queryString}` : "";
+}

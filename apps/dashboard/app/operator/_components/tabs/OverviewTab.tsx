@@ -1,27 +1,20 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// components/operator/tabs/OverviewTab.tsx
 "use client";
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity, TrendingUp } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
 import { useDailySnapshots } from "@/hooks/crud/useOperator";
 import { OperatorDetail } from "@/types/operator.types";
 import { RiskAssessment } from "@/types/risk.types";
 import { SectionContainer } from "@/components/shared/data/SectionContainer";
 import { MetricProgress } from "@/components/shared/data/MetricProgress";
 import { ActivityItem } from "@/components/shared/data/ActivityItem";
+import { AreaChart } from "@/components/shared/charts/AreaChart";
+import { LineChart } from "@/components/shared/charts/LineChart";
 
 interface OverviewTabProps {
   operator: OperatorDetail;
@@ -45,10 +38,11 @@ const OverviewTab = ({
     useDailySnapshots(operator?.operator_id, {
       date_from: startDate.toISOString().split("T")[0] || "",
       date_to: endDate.toISOString().split("T")[0] || "",
-      metrics: ["tvs", "delegatorCount", "avsCount"],
+      metrics: ["tvs", "delegator_count", "active_avs_count"],
     });
 
-  const snapshots = snapshotsData || [];
+  const snapshots = snapshotsData?.snapshots || [];
+  
 
   // Transform data for charts
   const chartData = snapshots?.map((snapshot: any) => ({
@@ -56,9 +50,9 @@ const OverviewTab = ({
       month: "short",
       day: "numeric",
     }),
-    tvs: parseFloat(snapshot.tvs) / 1e18,
-    delegators: snapshot.delegatorCount,
-    avs: snapshot.avsCount,
+    tvs: parseFloat(snapshot.tvs || "0") / 1e18,
+    delegators: snapshot.delegator_count,
+    avs: snapshot.active_avs_count,
   }));
 
   return (
@@ -165,51 +159,14 @@ const OverviewTab = ({
             <Skeleton className="h-full w-full" />
           </div>
         ) : chartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="colorTvs" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="hsl(var(--primary))"
-                    stopOpacity={0.3}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="hsl(var(--primary))"
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis
-                dataKey="date"
-                className="text-xs"
-                tick={{ fill: "hsl(var(--muted-foreground))" }}
-              />
-              <YAxis
-                className="text-xs"
-                tick={{ fill: "hsl(var(--muted-foreground))" }}
-                label={{ value: "ETH", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "hsl(var(--background))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "6px",
-                }}
-                formatter={(value: any) => [`${value.toFixed(2)} ETH`, "TVS"]}
-              />
-              <Area
-                type="monotone"
-                dataKey="tvs"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorTvs)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <AreaChart
+            data={chartData}
+            index="date"
+            categories={["tvs"]}
+            colors={["hsl(var(--primary))"]}
+            valueFormatter={(value) => `${value.toFixed(2)} ETH`}
+            height={300}
+          />
         ) : (
           <div className="h-64 flex items-center justify-center text-[#9F9FA9] my-auto">
             <div className="text-center">
@@ -229,34 +186,13 @@ const OverviewTab = ({
           {loadingSnapshots ? (
             <Skeleton className="h-48 w-full" />
           ) : chartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis
-                  dataKey="date"
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <YAxis
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="delegators"
-                  stroke="hsl(var(--chart-2))"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <LineChart
+              data={chartData}
+              index="date"
+              categories={["delegators"]}
+              colors={["hsl(var(--chart-2))"]}
+              height={200}
+            />
           ) : (
             <div className="h-48 flex items-center justify-center text-[#9F9FA9] my-auto text-sm">
               No data available
@@ -269,34 +205,13 @@ const OverviewTab = ({
           {loadingSnapshots ? (
             <Skeleton className="h-48 w-full" />
           ) : chartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis
-                  dataKey="date"
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <YAxis
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))" }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="avs"
-                  stroke="hsl(var(--chart-3))"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <LineChart
+              data={chartData}
+              index="date"
+              categories={["avs"]}
+              colors={["hsl(var(--chart-3))"]}
+              height={200}
+            />
           ) : (
             <div className="h-48 flex items-center justify-center text-[#9F9FA9] my-auto text-sm">
               No data available
