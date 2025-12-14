@@ -12,7 +12,7 @@ import {
   DelegatorListParams,
   DelegationHistoryParams,
 } from "@/types/delegator.types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
 // ==================== DELEGATORS ====================
 
@@ -26,6 +26,7 @@ export const useOperatorDelegators = (
     queryFn: () => getOperatorDelegators(id, params),
     enabled: enabled && !!id,
     select: (data) => data.data?.data,
+    placeholderData: keepPreviousData,
   });
 };
 
