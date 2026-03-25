@@ -47,6 +47,9 @@ const connectors = connectorsForWallets(
   {
     appName: "EigenWatch",
     projectId,
+    appDescription: "EigenWatch - EigenLayer Analytics & Monitoring",
+    appUrl: "https://eigenwatch.com",
+    appIcon: "https://eigenwatch.com/favicon.ico",
   },
 );
 
