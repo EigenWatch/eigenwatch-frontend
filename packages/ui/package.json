@@ -20,7 +20,6 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.34.0",
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@tanstack/react-query": "^5.90.16",
     "@walletconnect/ethereum-provider": "^2.23.6",
