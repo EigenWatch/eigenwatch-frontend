@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useDisconnect } from "wagmi";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Settings, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function UserMenu() {
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { primaryWallet, handleLogOut } = useDynamicContext();
   const { user, tier, accessToken, logout } = useAuthStore();
+  const address = primaryWallet?.address;
   const router = useRouter();
 
   const truncated = address
@@ -45,7 +45,7 @@ export function UserMenu() {
       }
     }
     logout();
-    disconnect();
+    await handleLogOut();
   }
 
   return (

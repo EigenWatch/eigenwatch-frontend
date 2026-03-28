@@ -153,6 +153,18 @@ export async function verifySignature(
   return handleResponse<VerifyResponse>(res);
 }
 
+export async function authenticateWithDynamic(
+  token: string,
+): Promise<VerifyResponse> {
+  const res = await fetch(`${BASE_URL}/api/v1/auth/dynamic`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ token }),
+    credentials: "include",
+  });
+  return handleResponse<VerifyResponse>(res);
+}
+
 export async function refreshToken(): Promise<RefreshResponse> {
   const res = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
     method: "POST",

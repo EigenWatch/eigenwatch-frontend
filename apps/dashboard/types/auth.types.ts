@@ -1,6 +1,6 @@
 export type UserTier = "FREE" | "PRO" | "ENTERPRISE";
 export type AuthTier = UserTier;
-export type AuthStep = "connect" | "sign" | "email" | "verify" | "complete";
+export type AuthStep = "connect" | "sign" | "email" | "verify" | "complete"; // connect/sign kept for backward compat but unused with Dynamic
 
 export interface UnseenBetaPerk {
   id: string;

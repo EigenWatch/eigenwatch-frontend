@@ -9,6 +9,7 @@ const AUTH_PUBLIC_PATHS = [
   "auth/verify",
   "auth/refresh",
   "auth/logout",
+  "auth/dynamic",
 ];
 
 async function proxyRequest(req: NextRequest, params: { path: string[] }) {
@@ -21,6 +22,7 @@ async function proxyRequest(req: NextRequest, params: { path: string[] }) {
   // Block unauthenticated requests except for auth flow endpoints
   const isAuthPath = AUTH_PUBLIC_PATHS.some((p) => path.startsWith(p));
   if (!isAuthPath && !authHeader) {
+    console.warn(`Blocking unauthenticated request to path: ${path}`);
     return NextResponse.json(
       { success: false, error: "Authentication required" },
       { status: 401 },
@@ -59,7 +61,21 @@ async function proxyRequest(req: NextRequest, params: { path: string[] }) {
     }
   }
 
-  const response = await fetch(targetUrl, fetchOptions);
+  let response: Response;
+  try {
+    response = await fetch(targetUrl, fetchOptions);
+  } catch (error: any) {
+    console.error("Proxy fetch failed:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Backend server unreachable",
+        message:
+          "The backend server is not responding on port 8000. Please ensure it is running.",
+      },
+      { status: 503 },
+    );
+  }
 
   // Build response, forwarding status and body
   const responseBody = await response.text();

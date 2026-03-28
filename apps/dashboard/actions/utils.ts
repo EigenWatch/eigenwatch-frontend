@@ -12,7 +12,7 @@ export async function setAuthCookie(token: string) {
   await clearAuthCookie();
   (await cookies()).set("access_token", token, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     maxAge: 7 * 24 * 60 * 60, // 7 days in seconds

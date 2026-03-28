@@ -12,16 +12,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useAccount, useDisconnect } from "wagmi";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import useAuthStore from "@/hooks/store/useAuthStore";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function UserDropdown() {
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { primaryWallet, handleLogOut } = useDynamicContext();
   const { user, tier } = useAuthStore();
+  const address = primaryWallet?.address;
   const [copied, setCopied] = useState(false);
   const router = useRouter();
 
@@ -106,7 +106,7 @@ export function UserDropdown() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="bg-white/10" />
         <DropdownMenuItem
-          onClick={() => disconnect()}
+          onClick={() => handleLogOut()}
           className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
         >
           <LogOut className="mr-2 h-4 w-4" />
