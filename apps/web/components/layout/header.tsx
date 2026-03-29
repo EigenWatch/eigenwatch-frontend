@@ -21,7 +21,7 @@ export default function Header() {
       logoHref="/"
       navLinks={navLinks}
       walletConnect={
-        <Link href={`${dashboardUrl}/operator`}>
+        <Link href={`${dashboardUrl}/operator` as any}>
           <button className="bg-[#155DFC] hover:bg-[#1249CC] rounded-xl flex items-center gap-2 px-6 py-2.5 text-white transition-all duration-200 shadow-lg shadow-[#155DFC]/20">
             <span className="text-sm sm:text-base font-semibold">
               Get Started

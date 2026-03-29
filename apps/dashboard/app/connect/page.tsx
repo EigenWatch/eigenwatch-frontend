@@ -23,7 +23,7 @@ function ConnectPageContent() {
   // Redirect to the target page once fully authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace(targetRedirect);
+      router.replace(targetRedirect as any);
     }
   }, [isAuthenticated, targetRedirect, router]);
 

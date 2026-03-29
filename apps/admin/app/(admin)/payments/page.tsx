@@ -142,7 +142,7 @@ export default function PaymentsPage() {
                     <TableCell>
                       {payment.user ? (
                         <Link
-                          href={`/users/${payment.user.id}`}
+                          href={`/users/${payment.user.id}` as any}
                           className="hover:underline"
                           onClick={(e) => e.stopPropagation()}
                         >

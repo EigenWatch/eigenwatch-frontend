@@ -131,7 +131,7 @@ const Hero = ({ stats }: HeroProps) => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4 sm:px-0">
             <Link
-              href={`${dashboardUrl}/operator`}
+              href={`${dashboardUrl}/operator` as any}
               className="bg-[#155DFC] hover:bg-[#1249CC] text-white rounded-xl flex items-center justify-center gap-2 font-medium transition-colors duration-200 px-6 sm:px-8 py-3 text-sm sm:text-base"
             >
               <span>Explore Operators</span>

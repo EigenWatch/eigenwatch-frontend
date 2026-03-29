@@ -40,7 +40,12 @@ export default function UsersPage() {
   }>({
     queryKey: ["admin-users", page, search, tier],
     queryFn: () =>
-      getAdminUsers({ page, limit: 20, search: search || undefined, tier: tier || undefined }),
+      getAdminUsers({
+        page,
+        limit: 20,
+        search: search || undefined,
+        tier: tier || undefined,
+      }),
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -62,7 +67,10 @@ export default function UsersPage() {
 
       {/* Filters */}
       <div className="flex items-center gap-3">
-        <form onSubmit={handleSearch} className="flex items-center gap-2 flex-1 max-w-sm">
+        <form
+          onSubmit={handleSearch}
+          className="flex items-center gap-2 flex-1 max-w-sm"
+        >
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -77,7 +85,13 @@ export default function UsersPage() {
           </Button>
         </form>
 
-        <Select value={tier} onValueChange={(v) => { setTier(v === "ALL" ? "" : v); setPage(1); }}>
+        <Select
+          value={tier}
+          onValueChange={(v) => {
+            setTier(v === "ALL" ? "" : v);
+            setPage(1);
+          }}
+        >
           <SelectTrigger className="w-[140px]">
             <SelectValue placeholder="All Tiers" />
           </SelectTrigger>
@@ -106,23 +120,34 @@ export default function UsersPage() {
             {isLoading
               ? Array.from({ length: 10 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-8" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-8" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
                   </TableRow>
                 ))
               : data?.users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
                       <Link
-                        href={`/users/${user.id}`}
+                        href={`/users/${user.id}` as any}
                         className="hover:underline"
                       >
                         <div>
                           <p className="font-medium text-sm">
-                            {user.display_name || truncateAddress(user.wallet_address)}
+                            {user.display_name ||
+                              truncateAddress(user.wallet_address)}
                           </p>
                           {user.display_name && (
                             <p className="text-xs text-muted-foreground">
