@@ -13,18 +13,16 @@ import {
   logout as apiLogout,
   authenticateWithDynamic,
 } from "@/lib/auth-api";
-import { setAuthCookie, clearAuthCookie } from "@/actions/utils";
-import { AuthModal } from "./AuthModal";
+import { setAuthCookie } from "@/actions/utils";
 import { BetaPerkModal } from "@/components/beta/BetaPerkModal";
 import type { UnseenBetaPerk } from "@/types/auth.types";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { primaryWallet, sdkHasLoaded, handleLogOut } =
-    useDynamicContext();
+  const { primaryWallet, sdkHasLoaded, handleLogOut } = useDynamicContext();
   const isDynamicLoggedIn = useIsLoggedIn();
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, user, openAuthModal, setRestoring } = useAuthStore();
+  const { isAuthenticated, user, setRestoring } = useAuthStore();
 
   const hasAttemptedRefresh = useRef(false);
   const hasAttemptedDynamicAuth = useRef(false);
@@ -81,18 +79,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         useAuthStore.getState().setUser(data.user);
 
         previousAddress.current = walletAddress;
-
-        // Check if user needs to add email
-        const emails = data.user.emails || [];
-        const hasVerifiedEmail = emails.some((e: any) => e.is_verified);
-        const hasUnverifiedEmail = emails.some((e: any) => !e.is_verified);
-
-        if (!hasVerifiedEmail && !hasUnverifiedEmail) {
-          // No email at all — nudge them to add one (only for wallet-connected users)
-          openAuthModal("email");
-        } else if (hasUnverifiedEmail && !hasVerifiedEmail) {
-          openAuthModal("verify");
-        }
       } catch (err: any) {
         console.error("Dynamic auth failed:", err);
         // If email conflict (409), show error but don't block — user can retry with different email
@@ -114,7 +100,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isDynamicLoggedIn,
     primaryWallet,
     isAuthenticated,
-    openAuthModal,
     setRestoring,
     handleLogOut,
   ]);
@@ -174,7 +159,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      <AuthModal />
       <BetaPerkModal
         perk={currentPerk}
         open={showBetaModal && currentPerk !== null}

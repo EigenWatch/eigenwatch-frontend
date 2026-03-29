@@ -1,11 +1,10 @@
 import {
-  NonceResponse,
-  VerifyResponse,
   RefreshResponse,
   User,
   UserEmail,
   UserSession,
   UserPreferences,
+  AuthTokens,
 } from "@/types/auth.types";
 import useAuthStore from "@/hooks/store/useAuthStore";
 import { setAuthCookie, clearAuthCookie } from "@/actions/utils";
@@ -130,39 +129,22 @@ async function authFetch(
 
 // ==================== AUTH (public — no token needed) ====================
 
-export async function getNonce(address: string): Promise<NonceResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/auth/challenge`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ address }),
-  });
-  return handleResponse<NonceResponse>(res);
-}
-
-export async function verifySignature(
-  address: string,
-  signature: string,
-  nonce: string,
-): Promise<VerifyResponse> {
-  const res = await fetch(`${BASE_URL}/api/v1/auth/verify`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ address, signature, nonce }),
-    credentials: "include",
-  });
-  return handleResponse<VerifyResponse>(res);
-}
-
-export async function authenticateWithDynamic(
-  token: string,
-): Promise<VerifyResponse> {
+export async function authenticateWithDynamic(token: string): Promise<{
+  tokens: AuthTokens;
+  user: User;
+  is_new_user: boolean;
+}> {
   const res = await fetch(`${BASE_URL}/api/v1/auth/dynamic`, {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify({ token }),
     credentials: "include",
   });
-  return handleResponse<VerifyResponse>(res);
+  return handleResponse<{
+    tokens: AuthTokens;
+    user: User;
+    is_new_user: boolean;
+  }>(res);
 }
 
 export async function refreshToken(): Promise<RefreshResponse> {

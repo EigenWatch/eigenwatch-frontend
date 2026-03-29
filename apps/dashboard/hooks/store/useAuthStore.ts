@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { User, AuthTier, AuthStep } from "@/types/auth.types";
+import { User, AuthTier } from "@/types/auth.types";
 
 interface AuthState {
   // State
@@ -9,17 +9,12 @@ interface AuthState {
   isAuthenticating: boolean;
   isRestoring: boolean;
   tier: AuthTier;
-  showAuthModal: boolean;
-  authStep: AuthStep;
 
   // Actions
   setUser: (user: User | null) => void;
   setAccessToken: (token: string | null) => void;
   setAuthenticating: (val: boolean) => void;
   setRestoring: (val: boolean) => void;
-  openAuthModal: (step?: AuthStep) => void;
-  closeAuthModal: () => void;
-  setAuthStep: (step: AuthStep) => void;
   logout: () => void;
 }
 
@@ -30,8 +25,6 @@ const useAuthStore = create<AuthState>((set) => ({
   isAuthenticating: false,
   isRestoring: true,
   tier: "FREE",
-  showAuthModal: false,
-  authStep: "connect",
 
   setUser: (user) =>
     set({
@@ -46,24 +39,14 @@ const useAuthStore = create<AuthState>((set) => ({
 
   setRestoring: (isRestoring) => set({ isRestoring }),
 
-  openAuthModal: (step?: AuthStep) =>
-    set({ showAuthModal: true, authStep: step || "sign" }),
-
-  closeAuthModal: () => set({ showAuthModal: false, isAuthenticating: false }),
-
-  setAuthStep: (authStep) => set({ authStep }),
-
   logout: () =>
-    set((state) => ({
+    set({
       user: null,
       accessToken: null,
       isAuthenticated: false,
       isAuthenticating: false,
       tier: "FREE",
-      // Only close/reset modal if it's not currently being used for an active flow
-      showAuthModal: state.showAuthModal,
-      authStep: state.showAuthModal ? state.authStep : "connect",
-    })),
+    }),
 }));
 
 export default useAuthStore;

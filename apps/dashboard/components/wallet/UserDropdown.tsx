@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Copy, User, ChevronDown } from "lucide-react";
+import { LogOut, Copy, User, ChevronDown, Wallet } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -12,14 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+  useDynamicContext,
+  DynamicUserProfile,
+} from "@dynamic-labs/sdk-react-core";
 import useAuthStore from "@/hooks/store/useAuthStore";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function UserDropdown() {
-  const { primaryWallet, handleLogOut } = useDynamicContext();
+  const { primaryWallet, handleLogOut, setShowDynamicUserProfile } =
+    useDynamicContext();
   const { user, tier } = useAuthStore();
   const address = primaryWallet?.address;
   const [copied, setCopied] = useState(false);
@@ -46,73 +50,88 @@ export function UserDropdown() {
   }[tier || "FREE"];
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="h-10 px-4 gap-2 bg-[#18181B] border-white/10 hover:bg-[#27272A] hover:text-white text-white font-medium"
-        >
-          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500" />
-          <span className={cn(!user?.display_name && "font-mono")}>
-            {displayName}
-          </span>
-          <ChevronDown className="w-4 h-4 text-muted-foreground ml-1" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-56 bg-[#18181B] border-white/10 text-white"
-        align="end"
-        forceMount
-      >
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {user?.display_name || "Connected"}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground font-mono">
-              {truncatedAddress}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-white/10" />
-        <DropdownMenuGroup>
-          <div className="px-2 py-1.5">
-            <div
+    <>
+      <DynamicUserProfile />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-[160px] h-11 px-3 gap-2 bg-[#18181B] border-white/10 hover:bg-[#27272A] hover:text-white text-white font-medium rounded-xl transition-all"
+          >
+            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shrink-0" />
+            <span
               className={cn(
-                "text-[10px] px-2 py-0.5 rounded-full w-fit border font-medium uppercase tracking-wider",
-                tierColor,
+                "truncate flex-1 text-left",
+                !user?.display_name && "font-mono",
               )}
             >
-              {`${tier} Plan`}
-            </div>
-          </div>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator className="bg-white/10" />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={handleCopyAddress}
-            className="focus:bg-[#27272A] focus:text-white cursor-pointer"
-          >
-            <Copy className="mr-2 h-4 w-4" />
-            <span>{copied ? "Copied!" : "Copy Address"}</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push("/settings#profile")}
-            className="focus:bg-[#27272A] focus:text-white cursor-pointer"
-          >
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator className="bg-white/10" />
-        <DropdownMenuItem
-          onClick={() => handleLogOut()}
-          className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+              {displayName}
+            </span>
+            <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-56 bg-[#18181B] border-white/10 text-white"
+          align="end"
+          forceMount
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Disconnect</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {user?.display_name || "Connected"}
+              </p>
+              <p className="text-xs leading-none text-muted-foreground font-mono">
+                {truncatedAddress}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-white/10" />
+          <DropdownMenuGroup>
+            <div className="px-2 py-1.5">
+              <div
+                className={cn(
+                  "text-[10px] px-2 py-0.5 rounded-full w-fit border font-medium uppercase tracking-wider",
+                  tierColor,
+                )}
+              >
+                {`${tier} Plan`}
+              </div>
+            </div>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator className="bg-white/10" />
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={handleCopyAddress}
+              className="focus:bg-[#27272A] focus:text-white cursor-pointer"
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              <span>{copied ? "Copied!" : "Copy Address"}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push("/settings#profile")}
+              className="focus:bg-[#27272A] focus:text-white cursor-pointer"
+            >
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setShowDynamicUserProfile(true)}
+              className="focus:bg-[#27272A] focus:text-white cursor-pointer"
+            >
+              <Wallet className="mr-2 h-4 w-4" />
+              <span>View Wallet</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator className="bg-white/10" />
+          <DropdownMenuItem
+            onClick={() => handleLogOut()}
+            className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Disconnect</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }

@@ -2,9 +2,10 @@
 
 import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
+import { DynamicConnectButton } from "@dynamic-labs/sdk-react-core";
 import { Wallet } from "lucide-react";
 import useAuthStore from "@/hooks/store/useAuthStore";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -47,8 +48,12 @@ function ConnectPageContent() {
           Connect your wallet or sign in with email to access the EigenWatch
           dashboard.
         </p>
-        <div className="flex justify-center">
-          <DynamicWidget />
+        <div className="flex justify-center pt-2">
+          <DynamicConnectButton>
+            <Button className="w-[160px] bg-[#3B82F6] hover:bg-[#2563EB] text-white font-medium h-11 rounded-lg shadow-lg shadow-blue-500/20 border-0 transition-all hover:scale-[1.02] active:scale-[0.98]">
+              Get Started
+            </Button>
+          </DynamicConnectButton>
         </div>
       </div>
     </div>
