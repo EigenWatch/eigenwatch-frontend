@@ -125,7 +125,7 @@ export default function OperatorDiscovery() {
             </div>
 
             <Link
-              href={`${dashboardUrl}/operator`}
+              href={`${dashboardUrl}/operator` as any}
               className="inline-flex items-center gap-2 bg-[#155DFC] hover:bg-[#1249CC] text-white rounded-xl font-medium transition-colors duration-200 px-6 sm:px-8 py-3 text-sm sm:text-base"
             >
               <span>Explore Operators</span>

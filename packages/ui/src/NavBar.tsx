@@ -65,7 +65,7 @@ export function NavBar({
       >
         {/* Logo */}
         <div className="flex my-auto">
-          <Link href={logoHref}>
+          <Link href={logoHref as any}>
             <Image
               src={"/assets/png/eigenwatch.png"}
               alt="logo"
@@ -84,7 +84,7 @@ export function NavBar({
                 ? currentPath === route.href
                 : currentPath.startsWith(route.href);
             return (
-              <Link key={index} href={route.href}>
+              <Link key={index} href={route.href as any}>
                 <button
                   className={`flex h-10 py-2 transition-all duration-300 ${
                     isActive
@@ -135,7 +135,7 @@ export function NavBar({
               {navLinks.map((link, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <Link
-                    href={link.href}
+                    href={link.href as any}
                     className="block text-[#A1A1AA] hover:text-white transition-colors py-2 text-lg font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >

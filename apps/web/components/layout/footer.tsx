@@ -21,7 +21,7 @@ export default function Footer() {
             Documentation
           </Link>
           <Link
-            href={`${dashboardUrl}/operator`}
+            href={`${dashboardUrl}/operator` as any}
             className="text-[#71717A] hover:text-white text-sm transition-colors"
           >
             Operators

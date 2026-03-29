@@ -66,7 +66,7 @@ export default function OperatorsTable({
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentData = sortedOperators.slice(
     startIndex,
-    startIndex + ITEMS_PER_PAGE
+    startIndex + ITEMS_PER_PAGE,
   );
 
   const handlePageChange = (page: number) => {
@@ -163,7 +163,7 @@ export default function OperatorsTable({
                 >
                   <td className="p-4">
                     <Link
-                      href={`/operator/${op.id}`}
+                      href={`/operator/${op.id}` as any}
                       className="flex items-center gap-3"
                     >
                       <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center overflow-hidden relative">
