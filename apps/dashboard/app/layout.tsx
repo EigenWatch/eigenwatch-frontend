@@ -5,7 +5,6 @@ import AppProvider from "./Provider";
 import { NavBar } from "@repo/ui/NavBar";
 import WalletProvider from "../../../packages/ui/src/providers/wallet";
 import { AuthProvider } from "@/components/auth/AuthProvider";
-import { EmailNudgeBanner } from "@/components/auth/EmailNudgeBanner";
 import { WalletButton } from "@/components/wallet/WalletButton";
 
 const navLinks = [
@@ -95,32 +94,31 @@ export default async function RootLayout({
         <WalletProvider>
           <AppProvider>
             <AuthProvider>
-                <div className="flex flex-col w-full h-screen">
-                  <NavBar
-                    logoHref={
-                      process.env.NEXT_PUBLIC_WEBSITE_URL ||
-                      "http://localhost:3000"
-                    }
-                    navLinks={navLinks}
-                    isDashboard={true}
-                    walletConnect={<WalletButton />}
-                  />
-                  <div className="w-full flex flex-col h-full overflow-y-auto pt-[65px]">
-                    <EmailNudgeBanner />
-                    <div className="max-w-[1440px] w-full mx-auto flex flex-col h-full px-4 sm:px-6 md:px-10 lg:px-[108px]">
-                      <React.Suspense
-                        fallback={
-                          <div className="flex-1 flex items-center justify-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-                          </div>
-                        }
-                      >
-                        {children}
-                      </React.Suspense>
-                    </div>
+              <div className="flex flex-col w-full h-screen">
+                <NavBar
+                  logoHref={
+                    process.env.NEXT_PUBLIC_WEBSITE_URL ||
+                    "http://localhost:3000"
+                  }
+                  navLinks={navLinks}
+                  isDashboard={true}
+                  walletConnect={<WalletButton />}
+                />
+                <div className="w-full flex flex-col h-full overflow-y-auto pt-[65px]">
+                  <div className="max-w-[1440px] w-full mx-auto flex flex-col h-full px-4 sm:px-6 md:px-10 lg:px-[108px]">
+                    <React.Suspense
+                      fallback={
+                        <div className="flex-1 flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                        </div>
+                      }
+                    >
+                      {children}
+                    </React.Suspense>
                   </div>
                 </div>
-                <FeedbackFAB />
+              </div>
+              <FeedbackFAB />
             </AuthProvider>
           </AppProvider>
         </WalletProvider>

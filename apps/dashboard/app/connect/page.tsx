@@ -2,14 +2,15 @@
 
 import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useAccount } from "wagmi";
+import { DynamicConnectButton } from "@dynamic-labs/sdk-react-core";
 import { Wallet } from "lucide-react";
 import useAuthStore from "@/hooks/store/useAuthStore";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
 function ConnectPageContent() {
-  const { isAuthenticated, isRestoring, openAuthModal } = useAuthStore();
+  const { isAuthenticated, isRestoring } = useAuthStore();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -19,33 +20,12 @@ function ConnectPageContent() {
     targetRedirect = "/operator";
   }
 
-  const { isConnected } = useAccount();
-
-  // Redirect to the target page if wallet is already connected
-  // AuthProvider will pick up the "connected but unauthenticated" state and show the modal on the destination page
-  useEffect(() => {
-    if (isConnected) {
-      router.replace(targetRedirect);
-    }
-  }, [isConnected, targetRedirect, router]);
-
   // Redirect to the target page once fully authenticated
   useEffect(() => {
-    // Robust check: only redirect if authenticated AND we have an access token cookie
-    // This prevents loops where the store is out of sync with the server
-    const hasCookie = document.cookie.includes("access_token=");
-
-    if (isAuthenticated && hasCookie) {
+    if (isAuthenticated) {
       router.replace(targetRedirect);
     }
   }, [isAuthenticated, targetRedirect, router]);
-
-  // Auto-open the auth modal once restore attempt completes
-  useEffect(() => {
-    if (!isRestoring && !isAuthenticated && !isConnected) {
-      openAuthModal("connect");
-    }
-  }, [isRestoring, isAuthenticated, isConnected, openAuthModal]);
 
   if (isRestoring) {
     return (
@@ -65,14 +45,16 @@ function ConnectPageContent() {
           Connect Your Wallet
         </h2>
         <p className="text-sm text-muted-foreground">
-          Connect your wallet and sign in to access the EigenWatch dashboard.
+          Connect your wallet or sign in with email to access the EigenWatch
+          dashboard.
         </p>
-        <button
-          onClick={() => openAuthModal("connect")}
-          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          Connect Wallet
-        </button>
+        <div className="flex justify-center pt-2">
+          <DynamicConnectButton>
+            <Button className="w-[160px] bg-[#3B82F6] hover:bg-[#2563EB] text-white font-medium h-11 rounded-md shadow-lg shadow-blue-500/20 border-0 transition-all hover:scale-[1.02] active:scale-[0.98]">
+              Get Started
+            </Button>
+          </DynamicConnectButton>
+        </div>
       </div>
     </div>
   );

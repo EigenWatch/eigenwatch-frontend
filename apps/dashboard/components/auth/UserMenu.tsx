@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useDisconnect } from "wagmi";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Settings, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function UserMenu() {
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { primaryWallet, handleLogOut } = useDynamicContext();
   const { user, tier, accessToken, logout } = useAuthStore();
+  const address = primaryWallet?.address;
   const router = useRouter();
 
   const truncated = address
@@ -44,16 +44,18 @@ export function UserMenu() {
         // Best-effort logout on server
       }
     }
+    await handleLogOut();
     logout();
-    disconnect();
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground hover:border-highlight-border transition-colors">
-          <span className="h-2 w-2 rounded-full bg-green-500" />
-          <span className="font-mono text-xs">{truncated}</span>
+        <button className="flex items-center gap-2 w-[160px] h-11 rounded-md border border-border bg-card px-3 text-sm text-foreground hover:border-highlight-border transition-colors">
+          <span className="h-2 w-2 rounded-full bg-green-500 shrink-0" />
+          <span className="font-mono text-xs truncate flex-1 text-left">
+            {truncated}
+          </span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 bg-card border-border">

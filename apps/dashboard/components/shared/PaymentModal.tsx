@@ -100,7 +100,7 @@ interface PaymentModalProps {
 export function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
   const { address, chainId } = useAccount();
   const { switchChain } = useSwitchChain();
-  const { user, openAuthModal, setUser } = useAuthStore();
+  const { user, setUser } = useAuthStore();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("base");
   const [selectedToken, setSelectedToken] = useState<TokenType>("USDC");
@@ -531,10 +531,10 @@ export function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
             <div className="space-y-3">
               {!emailVerified ? (
                 <button
-                  onClick={() => openAuthModal("email")}
+                  onClick={() => (window.location.href = "/settings#profile")}
                   className="w-full py-3.5 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-bold transition-all text-sm"
                 >
-                  Verify Email to Continue
+                  Go to Profile to Add Email
                 </button>
               ) : paymentMethod === "base" ? (
                 <BasePaymentFooter

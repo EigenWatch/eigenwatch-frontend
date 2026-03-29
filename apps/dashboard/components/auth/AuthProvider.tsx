@@ -1,23 +1,31 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useAccount } from "wagmi";
 import { useRouter, usePathname } from "next/navigation";
+import {
+  useDynamicContext,
+  useIsLoggedIn,
+  getAuthToken,
+} from "@dynamic-labs/sdk-react-core";
 import useAuthStore from "@/hooks/store/useAuthStore";
-import { doRefresh, logout as apiLogout } from "@/lib/auth-api";
-import { AuthModal } from "./AuthModal";
+import {
+  doRefresh,
+  logout as apiLogout,
+  authenticateWithDynamic,
+} from "@/lib/auth-api";
+import { setAuthCookie } from "@/actions/utils";
 import { BetaPerkModal } from "@/components/beta/BetaPerkModal";
 import type { UnseenBetaPerk } from "@/types/auth.types";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { address, isConnected } = useAccount();
+  const { primaryWallet, sdkHasLoaded, handleLogOut } = useDynamicContext();
+  const isDynamicLoggedIn = useIsLoggedIn();
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, user, openAuthModal, setRestoring } = useAuthStore();
-
-  console.log({ user });
+  const { isAuthenticated, user, setRestoring } = useAuthStore();
 
   const hasAttemptedRefresh = useRef(false);
+  const hasAttemptedDynamicAuth = useRef(false);
   const previousAddress = useRef<string | undefined>(undefined);
 
   // Beta perk modal state
@@ -42,49 +50,93 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Attempt silent auth on mount or when wallet connects
+  // Handle Dynamic auth success — send token to our backend
   useEffect(() => {
-    if (!isConnected || !address) {
-      if (previousAddress.current && isAuthenticated) {
-        // Wallet disconnected — clear auth and redirect to connect
-        apiLogout().then(() => {
-          if (pathname !== "/connect") {
-            router.replace("/connect");
-          }
-        });
-      }
-      previousAddress.current = undefined;
-      hasAttemptedRefresh.current = false;
-      setRestoring(false);
+    if (!sdkHasLoaded || !isDynamicLoggedIn || !primaryWallet) {
       return;
     }
 
-    // Wallet address changed (switched wallets)
-    if (previousAddress.current && previousAddress.current !== address) {
-      apiLogout().then(() => {
-        hasAttemptedRefresh.current = false;
-      });
+    const authToken = getAuthToken();
+    if (!authToken) return;
+
+    const walletAddress = primaryWallet.address;
+
+    // Already authenticated with our backend for this wallet
+    if (isAuthenticated && previousAddress.current === walletAddress) {
+      return;
     }
 
-    previousAddress.current = address;
+    // Prevent duplicate auth attempts
+    if (hasAttemptedDynamicAuth.current) return;
+    hasAttemptedDynamicAuth.current = true;
 
+    (async () => {
+      try {
+        const data = await authenticateWithDynamic(authToken);
+
+        useAuthStore.getState().setAccessToken(data.tokens.access_token);
+        await setAuthCookie(data.tokens.access_token);
+        useAuthStore.getState().setUser(data.user);
+
+        previousAddress.current = walletAddress;
+      } catch (err: any) {
+        console.error("Dynamic auth failed:", err);
+        // If email conflict (409), show error but don't block — user can retry with different email
+        if (err?.status === 409) {
+          // Reset Dynamic auth so they can try again
+          hasAttemptedDynamicAuth.current = false;
+          await handleLogOut();
+          alert(
+            err.message ||
+              "This email is already linked to another account. Please use a different email or sign in with the wallet associated with that account.",
+          );
+        }
+      } finally {
+        setRestoring(false);
+      }
+    })();
+  }, [
+    sdkHasLoaded,
+    isDynamicLoggedIn,
+    primaryWallet,
+    isAuthenticated,
+    setRestoring,
+    handleLogOut,
+  ]);
+
+  // Handle wallet disconnection from Dynamic
+  useEffect(() => {
+    if (!sdkHasLoaded) return;
+
+    if (!isDynamicLoggedIn && previousAddress.current && isAuthenticated) {
+      // Dynamic logged out — clear our auth
+      apiLogout().then(() => {
+        if (pathname !== "/connect") {
+          router.replace("/connect");
+        }
+      });
+      previousAddress.current = undefined;
+      hasAttemptedDynamicAuth.current = false;
+      hasAttemptedRefresh.current = false;
+    }
+  }, [sdkHasLoaded, isDynamicLoggedIn, isAuthenticated, pathname, router]);
+
+  // Silent refresh on mount (for returning users with valid session)
+  useEffect(() => {
+    if (!sdkHasLoaded) return;
     if (isAuthenticated || hasAttemptedRefresh.current) return;
+    // If Dynamic is logged in, the Dynamic auth effect will handle it
+    if (isDynamicLoggedIn) return;
 
     hasAttemptedRefresh.current = true;
 
-    // Try silent refresh — uses centralized doRefresh which deduplicates
-    // concurrent calls and updates the store automatically
     doRefresh()
       .then(() => {
         // doRefresh already called setAccessToken and setUser
       })
       .catch(() => {
-        // No existing session
-        if (isConnected && address) {
-          // Wallet is connected but no session found -> open sign modal on the CURRENT page
-          openAuthModal("sign");
-        } else if (pathname !== "/connect") {
-          // No wallet + no session -> redirect to connect page
+        // No existing session — redirect to connect
+        if (pathname !== "/connect") {
           const params = new URLSearchParams();
           params.set("redirect", pathname + window.location.search);
           router.replace(`/connect?${params.toString()}`);
@@ -94,10 +146,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setRestoring(false);
       });
   }, [
-    isConnected,
-    address,
+    sdkHasLoaded,
+    isDynamicLoggedIn,
     isAuthenticated,
-    openAuthModal,
     setRestoring,
     router,
     pathname,
@@ -108,7 +159,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      <AuthModal />
       <BetaPerkModal
         perk={currentPerk}
         open={showBetaModal && currentPerk !== null}

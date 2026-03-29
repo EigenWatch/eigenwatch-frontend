@@ -1,6 +1,5 @@
 export type UserTier = "FREE" | "PRO" | "ENTERPRISE";
 export type AuthTier = UserTier;
-export type AuthStep = "connect" | "sign" | "email" | "verify" | "complete";
 
 export interface UnseenBetaPerk {
   id: string;
@@ -57,16 +56,6 @@ export interface AuthTokens {
   access_token: string;
   token_type: string;
   // expires_in: number;
-}
-
-export interface NonceResponse {
-  nonce: string;
-  message: string;
-}
-
-export interface VerifyResponse {
-  tokens: AuthTokens;
-  user: User;
 }
 
 export interface RefreshResponse {
