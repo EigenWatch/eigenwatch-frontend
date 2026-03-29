@@ -50,7 +50,7 @@ function ConnectPageContent() {
         </p>
         <div className="flex justify-center pt-2">
           <DynamicConnectButton>
-            <Button className="w-[160px] bg-[#3B82F6] hover:bg-[#2563EB] text-white font-medium h-11 rounded-lg shadow-lg shadow-blue-500/20 border-0 transition-all hover:scale-[1.02] active:scale-[0.98]">
+            <Button className="w-[160px] bg-[#3B82F6] hover:bg-[#2563EB] text-white font-medium h-11 rounded-md shadow-lg shadow-blue-500/20 border-0 transition-all hover:scale-[1.02] active:scale-[0.98]">
               Get Started
             </Button>
           </DynamicConnectButton>

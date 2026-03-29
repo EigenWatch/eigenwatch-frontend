@@ -56,7 +56,7 @@ export function UserDropdown() {
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="w-[160px] h-11 px-3 gap-2 bg-[#18181B] border-white/10 hover:bg-[#27272A] hover:text-white text-white font-medium rounded-xl transition-all"
+            className="w-[160px] h-11 px-3 gap-2 bg-[#18181B] border-white/10 hover:bg-[#27272A] hover:text-white text-white font-medium rounded-md transition-all"
           >
             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shrink-0" />
             <span
